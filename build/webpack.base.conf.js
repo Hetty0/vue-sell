@@ -17,6 +17,7 @@ module.exports = {
     fallback: [path.join(__dirname, '../node_modules')], // 在当前文件中找不到时，会去'../node_modules'中去寻找
     alias: { // 别名，通过别名来缩短字符串的长度
       'src': path.resolve(__dirname, '../src'),
+      'common': path.resolve(__dirname, '../src/common'),
       'components': path.resolve(__dirname, '../src/components')
     }
   },
