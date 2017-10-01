@@ -1,5 +1,5 @@
 <template>
-  <div class="title">
+  <div class="title-line">
     <div class="line"></div>
     <div class="text">{{name}}</div>
     <div class="line"></div>
@@ -17,7 +17,7 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-  .title
+  .title-line
     display flex
     width 80%
     margin 28px auto 24px auto
