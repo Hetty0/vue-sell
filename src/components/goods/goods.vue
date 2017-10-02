@@ -1,6 +1,6 @@
 <template>
   <div class="goods">
-    <div class="menu-wrapper">
+    <div class="menu-wrapper" v-el:menu-wrapper>
       <ul>
         <li class="menu-item" v-for="item in goods" track-by="$index">
           <span class="text border-1px">
@@ -9,7 +9,7 @@
         </li>
       </ul>
     </div>
-    <div class="foods-wrapper">
+    <div class="foods-wrapper" v-el:food-wrapper>
       <ul>
         <li class="food-list" v-for="item in goods" track-by="$index">
           <h1 class="title">{{item.name}}</h1>
@@ -39,29 +39,40 @@
 </template>
 
 <script>
-let ERR_OK = 0;
-export default {
-  props: {
-    seller: {
-      type: Object
-    }
-  },
-  data() {
-    return {
-      goods: []
-    };
-  },
-  created() {
-    this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
-    this.$http.get('./api/goods').then((response) => {
-      response = response.body;
-      if(response.errno === ERR_OK) {
-        this.goods = response.data;
-        console.log(this.goods);
+  import BScroll from 'Better-scroll';
+
+  let ERR_OK = 0;
+
+  export default {
+    props: {
+      seller: {
+        type: Object
       }
-    });
-  }
-};
+    },
+    data() {
+      return {
+        goods: []
+      };
+    },
+    created() {
+      this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
+      this.$http.get('./api/goods').then((response) => {
+        response = response.body;
+        if(response.errno === ERR_OK) {
+          this.goods = response.data;
+          this.$nextTick(() => {
+            this._initScroll();
+          });
+        }
+      });
+    },
+    methods: {
+      _initScroll() {
+        this.menuScroll = new BScroll(this.$els.menuWrapper, {}); // ele, Object
+        this.menuScroll = new BScroll(this.$els.foodWrapper, {}); // ele, Object
+      }
+    }
+  };
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
@@ -77,7 +88,6 @@ export default {
       flex 0 0 80px
       width 80px //不写width 在Android上会有问题
       background #f3f5f7
-      overflow-y auto
       .menu-item
         display table
         height 54px
@@ -108,8 +118,6 @@ export default {
           vertical-align middle
           border-1px(rgba(7, 17, 27, 0.1))
           font-size 12px
-          
-
     .foods-wrapper
       flex 1  
       .title
@@ -143,6 +151,7 @@ export default {
             color rgb(147, 153, 159)
           .desc
             margin-bottom 8px
+            line-height 12px
           .extra
             .count
               margin-right 12px
