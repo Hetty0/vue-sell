@@ -1,1 +1,31 @@
 test git config --local user.name
+项目中遇到的问题：
+  1. 滚动区域内click失效
+    reason：引入betterScroll的原因，禁止点击事件。
+    resolve：在BScroller实例化的时候，传入参数click并设置为true,
+      new BScroll(this.$els.menuWrapper, {
+        click: true
+      })
+  2. 滚动区域内click在mobile端触发一次，在PC端触发两次
+    resolve：click的方法中传入$event对象，PC端没有event._constructed
+      addCart(event) {
+        if(!event._constructed) {
+          return;
+        }
+      }
+  3. 变量是双向绑定没有实现
+    reason：Vue.js的特性，给对象添加一个不存在的对象属性时，是监测不到新增属性的变化。
+    resolve：引入vue，调用vue.set()方法来实现设置属性，可以实现双向绑定。
+      import Vue from 'vue';
+      vue.set(obj, '属性', value)
+
+vue动画
+  在元素上添加属性transition="move"，在css样式中设置
+    ele
+      transition all 0.4s
+      &.move-enter
+        opacity 0
+      &.move-transition // 动画完成以后vue添加的class
+        opacity 1
+      &.move-leave
+        opacity 0
