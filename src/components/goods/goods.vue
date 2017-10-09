@@ -2,16 +2,16 @@
   <div class="goods">
     <div class="menu-wrapper" v-el:menu-wrapper>
       <ul>
-        <li class="menu-item" v-for="item in goods" track-by="$index">
+        <li class="menu-item" v-for="item in goods" track-by="$index" :class="{'current':currentIndex===$index}" @click="selectMenu($index,$event)">
           <span class="text border-1px">
             <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
           </span>
         </li>
       </ul>
     </div>
-    <div class="foods-wrapper" v-el:food-wrapper>
+    <div class="food-wrapper" v-el:food-wrapper>
       <ul>
-        <li class="food-list" v-for="item in goods" track-by="$index">
+        <li class="food-list food-list-hook" v-for="item in goods" track-by="$index">
           <h1 class="title">{{item.name}}</h1>
           <ul>
             <li class="food-item border-1px" v-for="food in item.foods" track-by="$index">
@@ -51,8 +51,22 @@
     },
     data() {
       return {
-        goods: []
+        goods: [],
+        listHeight: [],
+        scrollY: 0
       };
+    },
+    computed: {
+      currentIndex() {
+        for(let i = 0; i < this.listHeight.length; i++) {
+          let height1 = this.listHeight[i];
+          let height2 = this.listHeight[i + 1];
+          if(!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
+            return i;
+          }
+        }
+        return 0;
+      }
     },
     created() {
       this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
@@ -62,14 +76,41 @@
           this.goods = response.data;
           this.$nextTick(() => {
             this._initScroll();
+            this._calculateHeight();
           });
         }
       });
     },
     methods: {
+      selectMenu(index, event) {
+        if(!event._constructed) { // 浏览器原生event没有_constructed属性，自定义派发事件_constructed为true
+          return;
+        }
+        let foodList = this.$els.foodWrapper.getElementsByClassName('food-list-hook');
+        let el = foodList[index];
+        this.foodScroll.scrollToElement(el, 300);
+        console.log(index);
+      },
       _initScroll() {
-        this.menuScroll = new BScroll(this.$els.menuWrapper, {}); // ele, Object
-        this.menuScroll = new BScroll(this.$els.foodWrapper, {}); // ele, Object
+        this.menuScroll = new BScroll(this.$els.menuWrapper, {
+          click: true
+        }); // ele, Object
+        this.foodScroll = new BScroll(this.$els.foodWrapper, {
+          probeType: 3
+        }); // ele, Object
+        this.foodScroll.on('scroll', (pos) => {
+          this.scrollY = Math.abs(Math.round(pos.y));
+        });
+      },
+      _calculateHeight() {
+        let foodList = this.$els.foodWrapper.getElementsByClassName('food-list-hook');
+        let height = 0;
+        this.listHeight.push(height);
+        for(let i = 0; i < foodList.length; i++) {
+          let item = foodList[i];
+          height += item.clientHeight;
+          this.listHeight.push(height);
+        }
       }
     }
   };
@@ -92,8 +133,16 @@
         display table
         height 54px
         width 56px
-        margin 0 auto
+        padding 0 12px
         line-height 14px
+        &.current
+          position relative
+          z-index 10
+          margin-top -1px
+          font-weight 700
+          background #ffffff
+          .text 
+            border-none()
         .icon 
           display inline-block
           width 16px
@@ -118,7 +167,7 @@
           vertical-align middle
           border-1px(rgba(7, 17, 27, 0.1))
           font-size 12px
-    .foods-wrapper
+    .food-wrapper
       flex 1  
       .title
         padding-left 14px 
