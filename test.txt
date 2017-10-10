@@ -18,6 +18,7 @@ test git config --local user.name
     resolve：引入vue，调用vue.set()方法来实现设置属性，可以实现双向绑定。
       import Vue from 'vue';
       vue.set(obj, '属性', value)
+;
 
 vue动画
   在元素上添加属性transition="move"，在css样式中设置
@@ -29,3 +30,181 @@ vue动画
         opacity 1
       &.move-leave
         opacity 0
+
+vue export default对象属性
+  export default {
+    props: { // 接收来自父元素给予的属性
+      test: {
+        type: String // 定义属性类型
+      }
+    },
+    data() { // 定义变量
+      return {
+
+      };
+    }, 
+    created() {}, // 组件执行之前的触发函数
+    methods: {}, // 定义组件中的方法
+    computed: { // 计算属性
+      // 里面存有各种方法，计算属性可以实现数据的双向绑定
+    },
+    components: {}, // 组件内引入的其他子组件
+    events: { // 接收由$dispatch()向父元素派发的事件
+      '事件'(参数) {}
+    }
+  }
+
+父组件怎么访问子组件
+  1. 在子组件元素上添加属性 v-ref:名称
+  2. 通过 this.$refs.名称 来访问子组件
+
+组件内访问dom元素
+  1. 在元素上添加 v-el="名称"
+  2. 通过 this.$els.名称 访问组件内元素
+vue 数据双向绑定
+  v-model
+vue数据更新
+  this.$nextTick(() => {
+    // 方法中的内容会更新
+  });
+vue循环
+  v-for = "item in items" track-by="$index"
+      {{$index}}
+  v-for = "name in json"   
+      {{$index}}、{{$key}}
+  v-for = "(k,v) in json"
+vue事件
+  1. v-on:click 简写 @click=""
+  2. vue阻止事件冒泡 
+    1. ev.cancelBubble = true;
+    2. @click.stop="" （推荐）
+  3. vue阻止默认事件
+    1. ev.preventDefault();
+    2. @contextmenu.prevent （推荐）
+  4. vue自动识别键码
+    @keyup.13="" <==> @keyup.enter=""  // 13表示enter键
+    @keyup/keydown.left
+    @keyup/keydown.right
+    @keyup/keydown.up
+    @keyup/keydown.down
+
+vue事件广播
+  子组件传给父组件
+    1. 子组件通过触发方法派发事件
+       this.$dispatch('cart.add', event.target);  // 参数：事件名称 传递参数
+    2. 父组件在events属性对象中接收事件
+       export default {
+         events: {
+           'cart.add'(target) {}
+         }
+       }
+
+vue属性绑定
+  v-bind:属性 简写 :属性
+  关于 :class
+    1. :class="{'red': true}"
+    2. :class="[red]" // red是数据
+    3. :class="json"
+        data = {
+          json: {
+            red: a,
+            blue: false
+          }
+        }
+  关于 :style
+    1. :style="{color: 'red'}"
+    2. :style="[c, b]"
+      data = {
+        c: {
+          color: 'red',
+        },
+        d: {
+          backgroundColor: 'blue'
+        } 
+      }
+    3. :style="c"
+    
+vue模板
+  {{msg}} // 数据更新，模板变化
+  {{*msg}} // 数据只绑定一次
+  {{{msg}}} // HTML转意输出
+vue控制标签显示 / 隐藏
+  v-show / v-if
+vue filter
+  {{msg|filterA|filterB}}
+  examples:
+    {{'welcome'|uppercase}}
+    {{'welcome'|capitalize}} // 首字母大写
+    {{'WELCOE'|lowercase|capitalize}}
+    {{12|currency 'rmb'}}
+vue交互
+  $http 需要引入vue-resource模块，返回的是一个promise
+  $http.get('test.txt').then((res)=>{
+    // 返回成功
+    console.log(res.data);
+  }, (res)=>{
+    // 返回失败
+    console.log(res.data);
+  });
+  1. 给服务器发送数据(get)
+  $http.get('get.php',{
+    a:1,
+    b:2
+  }).then(res=>{
+    // 返回成功
+  },res=>{
+    // 返回失败
+  })
+  2. 给服务器发送数据(post)
+  $http.post('post.php',{
+    a:1,
+    b:2
+  },{
+    emulateJSON: true
+  }).then(res=>{
+    // 返回成功
+  }, res=>{
+    // 返回失败
+  })
+  3. 给服务器发送数据(jsonp)
+  $http.jsonp('https://sug.so.360.cn/suggest',{
+    word: 'a'
+  }).then(res=>{
+    // 返回成功
+  }, res=>{
+    // 返回失败
+  });
+;
+
+
+angular 
+
+angular数据绑定
+  ng-model
+
+angular控制器
+  ng-controller
+
+angular循环
+  ng-repeat="item in items track by $index"
+    {{$index}}
+
+angular事件
+  ng-click=""
+
+angular事件广播
+  1. 子组件向父组件进行广播 this.$scope.$emit('event-name', param) 
+  2. 父组件向子组件进行广播 this.$scope.$broadcast('event-name', param)
+  3. 监听事件广播 
+    this.$scope.$on('event-name', (event, param) => {
+      // ...
+    });
+
+angular控制标签显示/隐藏
+  ng-show / ng-hide / ng-if
+;
+
+关于eslint
+
+声明变量但未使用报错
+  解决方法：在表达式上行添加注释   /* eslint-disable no-unused-vars */

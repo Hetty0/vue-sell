@@ -38,7 +38,7 @@
         </li>
       </ul>
     </div>
-    <shop-cart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice" :select-foods="selectFoods"></shop-cart>
+    <shop-cart v-ref:shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice" :select-foods="selectFoods"></shop-cart>
   </div>
 </template>
 
@@ -110,6 +110,12 @@
         let el = foodList[index];
         this.foodScroll.scrollToElement(el, 300);
       },
+      _drop(target) {
+        // 体验优化，异步执行下落动画
+        this.$nextTick(() => {
+          this.$refs.shopcart.drop(target);
+        });
+      },
       _initScroll() {
         this.menuScroll = new BScroll(this.$els.menuWrapper, {
           click: true
@@ -136,6 +142,11 @@
     components: {
       shopCart,
       cartcontrol
+    },
+    events: {
+      'cart.add'(target) {
+        this._drop(target);
+      }
     }
   };
 </script>
