@@ -63,9 +63,9 @@ vue export default对象属性
   2. 通过 this.$els.名称 访问组件内元素
 vue 数据双向绑定
   v-model
-vue数据更新
+vue异步更新
   this.$nextTick(() => {
-    // 方法中的内容会更新
+    // 等dom渲染完成之后方法中的内容会更新
   });
 vue循环
   v-for = "item in items" track-by="$index"
@@ -131,12 +131,23 @@ vue模板
 vue控制标签显示 / 隐藏
   v-show / v-if
 vue filter
-  {{msg|filterA|filterB}}
+  1. {{msg|filterA|filterB}}
   examples:
     {{'welcome'|uppercase}}
     {{'welcome'|capitalize}} // 首字母大写
     {{'WELCOE'|lowercase|capitalize}}
     {{12|currency 'rmb'}}
+  2. 自定义filter
+    1) 在html中 {{msg|test}}
+    2) js：vue 的filter属性对象
+      export default {
+        filters: {
+          formatDate(msg) {
+            // 处理数据...
+          }
+        }
+      }
+
 vue交互
   $http 需要引入vue-resource模块，返回的是一个promise
   $http.get('test.txt').then((res)=>{
