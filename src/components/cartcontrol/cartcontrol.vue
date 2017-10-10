@@ -33,6 +33,7 @@
           return;
         }
         this.food.count--;
+        console.log(this.food.count);
       }
     }
   };
